@@ -293,14 +293,19 @@ class StreamProcessor
                 // Use native error handler
                 return false;
             });
-            $result = @stat($path);
+            $result = @$this->do_url_stat($path, $flags);
             restore_error_handler();
         } else {
-            $result = stat($path);
+            $result = $this->do_url_stat($path, $flags);
         }
         $this->intercept();
 
         return $result;
+    }
+
+    private function do_url_stat($path, $flags)
+    {
+        return ($flags & STREAM_URL_STAT_LINK) ? lstat($path) : stat($path);
     }
 
     /**
